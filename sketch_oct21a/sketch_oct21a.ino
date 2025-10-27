@@ -232,11 +232,32 @@ void loop() {
     // }
 
     // Handle switch (manual connect/disconnect)
-    if (switch1.update(digitalRead(SWITCH_PIN))) {
-      if (switch1.state()) {
-        latching_1 = !latching_1;
+    // if (switch1.update(digitalRead(SWITCH_PIN))) {
+    //   if (switch1.state()) {
+    //     latching_1 = !latching_1;
+    //   }
+    // }
+
+    // Handle switch (manual connect/disconnect)
+       if (switch1.update(digitalRead(SWITCH_PIN))) {
+         if (switch1.state()) {
+           latching_1 = !latching_1;
+      
+           if (latching_1) {
+             // Just reconnected: notify host and send an immediate data packet
+             SerialBT.println("STATUS,CONNECTED");
+             sendDataPacket();            // immediate update so host refreshes BPM
+             // optional: reset sendCounter so next scheduled send is aligned
+             // sendCounter = 0;          // uncomment if you prefer scheduling
+             Serial.println("Manual connect: Bluetooth active");
+           } else {
+             // Just disconnected: notify host
+             SerialBT.println("STATUS,DISCONNECTED");
+             Serial.println("Manual disconnect: Bluetooth off");
+           }
+        }
       }
-    }
+
 
     // Process incoming messages
     // handleIncomingBluetooth();
