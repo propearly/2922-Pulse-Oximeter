@@ -3,7 +3,7 @@
 
 // -------------------- Pins --------------------
 #define LED_RED_PIN    32
-#define LED_BLUE_PIN   2
+#define LED_BLUE_PIN   35
 #define SWITCH_PIN     33
 #define SENSOR_PIN     25
 
@@ -30,7 +30,7 @@ bool beatDetected = false;
 float beatsPerMinute = 0.0;
 bool connected = true;          // connection state
 
-uint16_t packetSamples[PACKET_SAMPLES];
+uint16_t packetSamples[PACKET_SAMPLES]; //temporary array to send via bluetooth
 uint8_t packetIndex = 0;
 
 // LED state
@@ -43,7 +43,7 @@ uint16_t signalMin = 4095;
 uint16_t threshold = 0;
 uint16_t signalRange = 0;
 
-// Smoothing
+// Smoothing (averaging)
 #define NUM_SMOOTH 5
 uint16_t smoothBuf[NUM_SMOOTH] = {0};
 uint8_t smoothIdx = 0;
@@ -69,7 +69,7 @@ void updateLEDs() {
         }
     }
 
-    // Red LED: BPM out of range = ON
+    // Red LED: BPM out of range = ON, bluetooth disconeccted
     if (beatsPerMinute > 0.0 && (beatsPerMinute < BPM_LOW || beatsPerMinute > BPM_HIGH)) {
         digitalWrite(LED_RED_PIN, HIGH);
     } else {
@@ -77,7 +77,7 @@ void updateLEDs() {
     }
 }
 
-void sendDataPacket() {
+void sendDataPacket() { 
     if (!connected) return;
 
     SerialBT.print("DATA,");
@@ -109,7 +109,7 @@ void setup() {
 
 // -------------------- Loop --------------------
 void loop() {
-    // 20 ms tick
+    // code runs every 20 ms tick
     if ((micros() - lastTick) >= TICK_20MS) {
         lastTick = micros();
 
