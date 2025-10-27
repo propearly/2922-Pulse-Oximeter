@@ -85,24 +85,36 @@ void setup() {
   lastTickTime = micros();
 }
 
+// void updateLEDs() {
+//   //Blue: if "connected" (latching_1 true) -> ON, if false -> flash
+//   if (latching_1) {
+//     digitalWrite(LED_BLUE_PIN, HIGH);
+//   } else {
+//     if (micros() - lastBlueBlink > 500000) { // 500 ms
+//       lastBlueBlink = micros();
+//       blueState = !blueState;
+//       digitalWrite(LED_BLUE_PIN, blueState ? HIGH : LOW);
+//     }
+//   }
+//   //Red: show alert if BPM out of range
+//   if (beatsPerMinute > 0.0 && (beatsPerMinute < BPM_LOW || beatsPerMinute > BPM_HIGH)) {
+//     digitalWrite(LED_RED_PIN, HIGH);
+//   } else {
+//     digitalWrite(LED_RED_PIN, LOW);
+//   }
+// }
+
 void updateLEDs() {
-  //Blue: if "connected" (latching_1 true) -> ON, if false -> flash
+  // Blue LED: flash when connected, steady OFF when disconnected
   if (latching_1) {
-    digitalWrite(LED_BLUE_PIN, HIGH);
-  } else {
-    if (micros() - lastBlueBlink > 500000) { // 500 ms
+    if (micros() - lastBlueBlink > 300000) { // 300 ms blink period
       lastBlueBlink = micros();
       blueState = !blueState;
       digitalWrite(LED_BLUE_PIN, blueState ? HIGH : LOW);
     }
-  }
-  //Red: show alert if BPM out of range
-  if (beatsPerMinute > 0.0 && (beatsPerMinute < BPM_LOW || beatsPerMinute > BPM_HIGH)) {
-    digitalWrite(LED_RED_PIN, HIGH);
   } else {
-    digitalWrite(LED_RED_PIN, LOW);
+    digitalWrite(LED_BLUE_PIN, LOW); // off when disconnected
   }
-}
 
 
 // -----------------------------------------------------------------------------
@@ -173,24 +185,44 @@ void loop() {
     }
 
     // Handle switch (manual connect/disconnect)
-       if (switch1.update(digitalRead(SWITCH_PIN))) {
-         if (switch1.state()) {
-           latching_1 = !latching_1;
+      //  if (switch1.update(digitalRead(SWITCH_PIN))) {
+      //    if (switch1.state()) {
+      //      latching_1 = !latching_1;
       
-           if (latching_1) {
-             // Just reconnected: notify host and send an immediate data packet
-             SerialBT.println("STATUS,CONNECTED");
-             sendDataPacket();            // immediate update so host refreshes BPM
-             // optional: reset sendCounter so next scheduled send is aligned
-             // sendCounter = 0;          // uncomment if you prefer scheduling
-             Serial.println("Manual connect: Bluetooth active");
-           } else {
-             // Just disconnected: notify host
-             SerialBT.println("STATUS,DISCONNECTED");
-             Serial.println("Manual disconnect: Bluetooth off");
-           }
+      //      if (latching_1) {
+      //        // Just reconnected: notify host and send an immediate data packet
+      //        SerialBT.println("STATUS,CONNECTED");
+      //        sendDataPacket();            // immediate update so host refreshes BPM
+      //        // optional: reset sendCounter so next scheduled send is aligned
+      //        // sendCounter = 0;          // uncomment if you prefer scheduling
+      //        Serial.println("Manual connect: Bluetooth active");
+      //      } else {
+      //        // Just disconnected: notify host
+      //        SerialBT.println("STATUS,DISCONNECTED");
+      //        Serial.println("Manual disconnect: Bluetooth off");
+      //      }
+      //   }
+      // }
+          if (switch1.update(digitalRead(SWITCH_PIN))) {
+            if (switch1.state()) {
+              latching_1 = !latching_1;
+      
+            if (latching_1) {
+              // Reconnect: restart Bluetooth to make it discoverable immediately
+              SerialBT.end();
+              delay(100);  // small delay for clean restart
+              SerialBT.begin("ESP32_PulseIt"); 
+              SerialBT.println("STATUS,CONNECTED");
+              sendDataPacket(); // immediate update
+              Serial.println("Manual connect: Bluetooth active");
+            } else {
+              // Disconnect: stop Bluetooth advertising
+              SerialBT.println("STATUS,DISCONNECTED");
+              SerialBT.end();   // fully close BT
+              Serial.println("Manual disconnect: Bluetooth off");
+            }
+          }
         }
-      }
 
 
     // Process incoming messages
