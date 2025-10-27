@@ -115,7 +115,7 @@ void updateLEDs() {
   } else {
     digitalWrite(LED_BLUE_PIN, LOW); // off when disconnected
   }
-
+}
 
 // -----------------------------------------------------------------------------
 // Send Data Packet
