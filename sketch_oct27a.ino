@@ -28,14 +28,16 @@ unsigned long lastBeatTime = 0;
 
 bool beatDetected = false;
 float beatsPerMinute = 0.0;
-bool connected = true;          // connection state
+//bool connected = true;          // connection state
+bool connected = false;
 
 uint16_t packetSamples[PACKET_SAMPLES]; //temporary array to send via bluetooth
 uint8_t packetIndex = 0;
 
 // LED state
 unsigned long lastBlueBlink = 0;
-bool blueState = false;
+//bool blueState = false;
+bool blueState = true;
 
 // Adaptive threshold
 uint16_t signalMax = 0;
@@ -61,12 +63,14 @@ void updateLEDs() {
     // Blue LED: connected = ON, disconnected = FLASHING
     if (connected) {
         digitalWrite(LED_BLUE_PIN, HIGH);
-    } else {
-        if (micros() - lastBlueBlink > 500000) { // 500ms
-            lastBlueBlink = micros();
-            blueState = !blueState;
-            digitalWrite(LED_BLUE_PIN, blueState ? HIGH : LOW);
-        }
+    } 
+    else {
+        // if (micros() - lastBlueBlink > 500000) { // 500ms
+        //     lastBlueBlink = micros();
+        //     blueState = !blueState;
+        //     digitalWrite(LED_BLUE_PIN, blueState ? HIGH : LOW);
+        // }
+        digitalWrite(LED_BLUE_PIN, LOW);
     }
 
     // Red LED: BPM out of range = ON, bluetooth disconeccted
