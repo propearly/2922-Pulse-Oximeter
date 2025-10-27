@@ -3,7 +3,7 @@
 
 // -------------------- Pins --------------------
 #define LED_RED_PIN    32
-#define LED_BLUE_PIN   35
+#define LED_BLUE_PIN   2
 #define SWITCH_PIN     33
 #define SENSOR_PIN     25
 
