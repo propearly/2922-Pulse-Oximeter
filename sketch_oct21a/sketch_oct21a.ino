@@ -103,51 +103,6 @@ void updateLEDs() {
     digitalWrite(LED_RED_PIN, LOW);
   }
 }
-//   // 🔵 Blue LED — Bluetooth connection indicator
-//   if (bluetoothConnected) {
-//     // Blink slowly while connected
-//     if (millis() - lastBlueBlink > 500) {
-//       lastBlueBlink = millis();
-//       blueState = !blueState;
-//       digitalWrite(LED_BLUE_PIN, blueState);
-//     }
-//   } else {
-//     // Off when disconnected
-//     digitalWrite(LED_BLUE_PIN, LOW);
-//   }
-
-//   // 🔴 Red LED — BPM alert
-//   if (beatsPerMinute > 0.0 && (beatsPerMinute < BPM_LOW || beatsPerMinute > BPM_HIGH)) {
-//     digitalWrite(LED_RED_PIN, HIGH);
-//   } else {
-//     digitalWrite(LED_RED_PIN, LOW);
-//   }
-// }
-  
-
-// -----------------------------------------------------------------------------
-// Handle messages from Python GUI
-// -----------------------------------------------------------------------------
-// void handleIncomingBluetooth() {
-//   if (SerialBT.available()) {
-//     String msg = SerialBT.readStringUntil('\n');
-//     msg.trim();
-
-//     if (msg == "ALERT_HIGH" || msg == "ALERT_LOW") {
-//       // Python GUI alerts trigger red LED
-//       digitalWrite(LED_RED_PIN, HIGH);
-//       Serial.println("⚠️ Alert received from Python GUI!");
-//     } else if (msg == "ALERT_CLEAR") {
-//       digitalWrite(LED_RED_PIN, LOW);
-//     } else if (msg == "DISCONNECT") {
-//       bluetoothConnected = false;
-//       Serial.println("Bluetooth manually disconnected by GUI");
-//     } else if (msg == "CONNECT") {
-//       bluetoothConnected = true;
-//       Serial.println("Bluetooth manually connected by GUI");
-//     }
-//   }
-// }
 
 
 // -----------------------------------------------------------------------------
@@ -216,27 +171,6 @@ void loop() {
       signalMax = 0;
       signalMin = 4095;
     }
-
-    // Handle button for manual BT toggle
-    // if (switch1.update(digitalRead(SWITCH_PIN))) {
-    //   if (switch1.state()) {
-    //     bluetoothConnected = !bluetoothConnected;
-    //     if (bluetoothConnected) {
-    //       SerialBT.println("STATUS,CONNECTED");
-    //       Serial.println("Manual connect: Bluetooth active");
-    //     } else {
-    //       SerialBT.println("STATUS,DISCONNECTED");
-    //       Serial.println("Manual disconnect: Bluetooth off");
-    //     }
-    //   }
-    // }
-
-    // Handle switch (manual connect/disconnect)
-    // if (switch1.update(digitalRead(SWITCH_PIN))) {
-    //   if (switch1.state()) {
-    //     latching_1 = !latching_1;
-    //   }
-    // }
 
     // Handle switch (manual connect/disconnect)
        if (switch1.update(digitalRead(SWITCH_PIN))) {
