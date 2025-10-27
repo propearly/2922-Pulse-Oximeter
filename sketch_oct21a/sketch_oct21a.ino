@@ -50,7 +50,7 @@ unsigned long lastBeatTime = 0;
 float beatsPerMinute = 0.0;
 
 Switch switch1(1, DEBOUNCE_CNT);
-//bool bluetoothConnected = false; // manual connection toggle
+bool bluetoothConnected = false; // manual connection toggle
 
 bool latching_1 = true; // device connected by default
 unsigned long seqNumber = 0;
